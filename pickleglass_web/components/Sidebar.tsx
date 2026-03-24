@@ -438,36 +438,24 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
         >
             <header className={`group relative h-6 flex shrink-0 items-center justify-between`}>
                 {isCollapsed ? (
-                    <Link href="https://github.com/zaengerlein/glass" target="_blank" rel="noopener noreferrer" className="flex items-center">
-                        <Image src="/symbol.svg" alt="Logo" width={20} height={20} className="mx-3 shrink-0" />
+                    <div className="flex items-center">
+                        <span className="mx-3 shrink-0 text-[14px] font-bold text-[#282828]">G</span>
                         <button
                             onClick={toggleSidebar}
                             onKeyDown={e => handleKeyDown(e, toggleSidebar)}
-                            className={`${
-                                isCollapsed ? '' : ''
-                            } "absolute inset-0 flex items-center justify-center text-gray-500 hover:text-gray-800 rounded-md opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-out focus:outline-none`}
+                            className="absolute inset-0 flex items-center justify-center text-gray-500 hover:text-gray-800 rounded-md opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 ease-out focus:outline-none"
                             aria-label="Open sidebar"
                         >
                             <Image src="/unfold.svg" alt="Open" width={18} height={18} className="h-4.5 w-4.5" />
                         </button>
-                    </Link>
+                    </div>
                 ) : (
                     <>
-                        <Link href="https://github.com/zaengerlein/glass" target="_blank" rel="noopener noreferrer" className="flex items-center">
-                            <Image
-                                src={isCollapsed ? '/symbol.svg' : '/word.svg'}
-                                alt="pickleglass Logo"
-                                width={50}
-                                height={14}
-                                className="mx-3 shrink-0"
-                            />
-                        </Link>
+                        <span className="mx-3 shrink-0 text-[16px] font-bold text-[#282828]">Glass</span>
                         <button
                             onClick={toggleSidebar}
                             onKeyDown={e => handleKeyDown(e, toggleSidebar)}
-                            className={`${
-                                isCollapsed ? '' : ''
-                            } text-gray-500 hover:text-gray-800 p-1 rounded-[4px] hover:bg-[#f7f7f7] h-6 w-6 transition-colors focus:outline-none`}
+                            className="text-gray-500 hover:text-gray-800 p-1 rounded-[4px] hover:bg-[#f7f7f7] h-6 w-6 transition-colors focus:outline-none"
                             aria-label="Close sidebar"
                         >
                             <Image src="/unfold.svg" alt="Close" width={16} height={16} className="transform rotate-180" />
