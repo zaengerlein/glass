@@ -87,6 +87,25 @@ class ModelStateService extends EventEmitter {
             }
         }
 
+        // Refresh Whisper local models
+        try {
+            const whisperService = require('./whisperService');
+            if (whisperService.installState?.isInstalled || whisperService.installState?.isInitialized) {
+                const installed = await whisperService.handleGetInstalledModels();
+                if (installed?.success && installed.models) {
+                    const whisperSttModels = installed.models.map(m => ({
+                        id: m.id,
+                        name: `${m.name} (${m.size})${m.installed ? '' : ' - Download'}`
+                    }));
+                    if (whisperSttModels.length > 0) {
+                        updateProviderModels('whisper', [], whisperSttModels);
+                    }
+                }
+            }
+        } catch (err) {
+            console.warn('[ModelStateService] Whisper model detection failed:', err.message);
+        }
+
         this.emit('state-updated', await this.getLiveState());
         console.log('[ModelStateService] Background model refresh complete.');
     }
