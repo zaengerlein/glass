@@ -1,5 +1,4 @@
 const sqliteRepository = require('./sqlite.repository');
-const firebaseRepository = require('./firebase.repository');
 
 let authService = null;
 
@@ -7,54 +6,40 @@ function setAuthService(service) {
     authService = service;
 }
 
-function getBaseRepository() {
-    if (!authService) {
-        // Fallback or error if authService is not set, to prevent crashes.
-        // During initial load, it might not be set, so we default to sqlite.
-        return sqliteRepository;
-    }
-    const user = authService.getCurrentUser();
-    if (user && user.isLoggedIn) {
-        return firebaseRepository;
-    }
-    return sqliteRepository;
-}
-
-// The adapter layer that injects the UID
 const sessionRepositoryAdapter = {
-    setAuthService, // Expose the setter
+    setAuthService,
 
-    getById: (id) => getBaseRepository().getById(id),
-    
+    getById: (id) => sqliteRepository.getById(id),
+
     create: (type = 'ask') => {
         const uid = authService.getCurrentUserId();
-        return getBaseRepository().create(uid, type);
+        return sqliteRepository.create(uid, type);
     },
-    
+
     getAllByUserId: () => {
         const uid = authService.getCurrentUserId();
-        return getBaseRepository().getAllByUserId(uid);
+        return sqliteRepository.getAllByUserId(uid);
     },
 
-    updateTitle: (id, title) => getBaseRepository().updateTitle(id, title),
-    
-    deleteWithRelatedData: (id) => getBaseRepository().deleteWithRelatedData(id),
+    updateTitle: (id, title) => sqliteRepository.updateTitle(id, title),
 
-    end: (id) => getBaseRepository().end(id),
+    deleteWithRelatedData: (id) => sqliteRepository.deleteWithRelatedData(id),
 
-    updateType: (id, type) => getBaseRepository().updateType(id, type),
+    end: (id) => sqliteRepository.end(id),
 
-    touch: (id) => getBaseRepository().touch(id),
+    updateType: (id, type) => sqliteRepository.updateType(id, type),
+
+    touch: (id) => sqliteRepository.touch(id),
 
     getOrCreateActive: (requestedType = 'ask') => {
         const uid = authService.getCurrentUserId();
-        return getBaseRepository().getOrCreateActive(uid, requestedType);
+        return sqliteRepository.getOrCreateActive(uid, requestedType);
     },
 
     endAllActiveSessions: () => {
         const uid = authService.getCurrentUserId();
-        return getBaseRepository().endAllActiveSessions(uid);
+        return sqliteRepository.endAllActiveSessions(uid);
     },
 };
 
-module.exports = sessionRepositoryAdapter; 
+module.exports = sessionRepositoryAdapter;
