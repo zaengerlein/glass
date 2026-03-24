@@ -114,6 +114,14 @@ const LATEST_SCHEMA = {
             { name: 'uid', type: 'TEXT PRIMARY KEY' },
             { name: 'keychain_completed', type: 'INTEGER DEFAULT 0' }
         ]
+    },
+    model_cache: {
+        columns: [
+            { name: 'provider', type: 'TEXT PRIMARY KEY' },
+            { name: 'llm_models_json', type: "TEXT DEFAULT '[]'" },
+            { name: 'stt_models_json', type: "TEXT DEFAULT '[]'" },
+            { name: 'fetched_at', type: 'INTEGER DEFAULT 0' }
+        ]
     }
 };
 
