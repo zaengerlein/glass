@@ -1,7 +1,7 @@
 # electron-builder.yml
 
 # The unique application ID
-appId: com.pickle.glass
+appId: de.zaengerlein.glass
 
 # The user-facing application name
 productName: Glass
