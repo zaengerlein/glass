@@ -51,8 +51,12 @@ const PROVIDERS = {
     handler: () => require("./providers/deepgram"),
     llmModels: [],
     sttModels: [
-        { id: 'nova-3', name: 'Nova-3 (General)' },
-        ],
+        { id: 'nova-3', name: 'Nova-3' },
+        { id: 'nova-2', name: 'Nova-2' },
+        { id: 'nova', name: 'Nova' },
+        { id: 'enhanced', name: 'Enhanced' },
+        { id: 'base', name: 'Base' },
+    ],
     },
   'ollama': {
       name: 'Ollama (Local)',
@@ -139,6 +143,20 @@ function getAvailableProviders() {
   return { stt: [...new Set(stt)], llm: [...new Set(llm)] };
 }
 
+function updateProviderModels(provider, llmModels, sttModels) {
+    if (!PROVIDERS[provider]) {
+        console.warn(`[Factory] Cannot update models for unknown provider: ${provider}`);
+        return;
+    }
+    if (llmModels && llmModels.length > 0) {
+        PROVIDERS[provider].llmModels = llmModels;
+    }
+    if (sttModels && sttModels.length > 0) {
+        PROVIDERS[provider].sttModels = sttModels;
+    }
+    console.log(`[Factory] Updated models for ${provider}: ${llmModels?.length || 0} LLM, ${sttModels?.length || 0} STT`);
+}
+
 module.exports = {
   PROVIDERS,
   createSTT,
@@ -146,4 +164,5 @@ module.exports = {
   createStreamingLLM,
   getProviderClass,
   getAvailableProviders,
+  updateProviderModels,
 };
