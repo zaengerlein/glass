@@ -9,7 +9,7 @@ productName: Glass
 # Publish configuration for GitHub releases
 publish:
     provider: github
-    owner: pickle-com
+    owner: zaengerlein
     repo: glass
     releaseType: draft
 
