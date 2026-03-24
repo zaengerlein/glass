@@ -44,6 +44,10 @@ const OPENAI_DISPLAY_NAMES = {
     'o1': 'O1',
     'o1-mini': 'O1 Mini',
     'o1-preview': 'O1 Preview',
+    'gpt-5.4': 'GPT-5.4',
+    'gpt-5.4-mini': 'GPT-5.4 Mini',
+    'gpt-5': 'GPT-5',
+    'gpt-5-mini': 'GPT-5 Mini',
     'gpt-4.1': 'GPT-4.1',
     'gpt-4.1-mini': 'GPT-4.1 Mini',
     'gpt-4.1-nano': 'GPT-4.1 Nano',
@@ -91,7 +95,7 @@ async function fetchOpenAIModels(apiKey) {
     const allModels = data.data;
 
     const llmExclude = /instruct|realtime|audio|search|embedding|vision|dall|tts|babbage|davinci|curie|ada/i;
-    const llmInclude = /^(gpt-4|gpt-3\.5|o1|o3|o4)/;
+    const llmInclude = /^(gpt-|o\d)/;
     const llmModels = allModels
         .filter(m => llmInclude.test(m.id) && !llmExclude.test(m.id))
         .sort((a, b) => (b.created || 0) - (a.created || 0))
