@@ -5,7 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useState, createElement, useEffect, useMemo, useCallback, memo } from 'react';
 import { Search, Activity, HelpCircle, Download, ChevronDown, User, Shield, Database, CreditCard, LogOut, LucideIcon } from 'lucide-react';
-import { logout, UserProfile, checkApiKeyStatus } from '@/utils/api';
+import { UserProfile, checkApiKeyStatus } from '@/utils/api';
 import { useAuth } from '@/utils/auth';
 
 const ANIMATION_DURATION = {
@@ -217,22 +217,10 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
     const bottomItems = useMemo(
         () => [
             {
-                href: 'https://discord.gg/UCZH5B5Hpd',
+                href: 'https://github.com/zaengerlein/glass',
                 icon: '/linkout.svg',
-                text: 'Join Discord',
-                ariaLabel: 'Help Center (new window)',
-            },
-            {
-                href: 'https://www.dropbox.com/scl/fi/esk4h8z45sryvbremy57v/Pickle_latest.dmg?rlkey=92y535bz6p6gov6vd17x6q53b&st=9kl0annj&dl=1',
-                icon: '/download.svg',
-                text: 'Download Pickle Camera',
-                ariaLabel: 'Download Pickle Camera (new window)',
-            },
-            {
-                href: 'hhttps://www.dropbox.com/scl/fi/znid09apxiwtwvxer6oc9/Glass_latest.dmg?rlkey=gwvvyb3bizkl25frhs4k1zwds&st=37q31b4w&dl=1',
-                icon: '/download.svg',
-                text: 'Download Pickle Glass',
-                ariaLabel: 'Download Pickle Glass (new window)',
+                text: 'GitHub',
+                ariaLabel: 'GitHub Repository (new window)',
             },
         ],
         []
@@ -247,14 +235,6 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
             setIsSettingsExpanded(prev => !prev);
         }
     }, [pathname]);
-
-    const handleLogout = useCallback(async () => {
-        try {
-            await logout();
-        } catch (error) {
-            console.error('An error occurred during logout:', error);
-        }
-    }, []);
 
     const handleKeyDown = useCallback((event: React.KeyboardEvent, action?: () => void) => {
         if (event.key === 'Enter' || event.key === ' ') {
@@ -375,29 +355,11 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
                                     </li>
                                 ))}
                                 <li role="none">
-                                    {isFirebaseUser ? (
-                                        <button
-                                            onClick={handleLogout}
-                                            onKeyDown={e => handleKeyDown(e, handleLogout)}
-                                            className={`
-                                    group flex items-center rounded-lg px-[12px] py-[8px] text-[13px] gap-x-[9px]
-                                    text-red-600 hover:text-red-700 hover:bg-[#f7f7f7] w-full 
-                                    transition-colors duration-${ANIMATION_DURATION.COLOR_TRANSITION} ease-out
-                                    focus:outline-none
-                                  `}
-                                            style={{ willChange: 'background-color, color' }}
-                                            role="menuitem"
-                                            aria-label="Logout"
-                                        >
-                                            <LogOut className="h-4 w-4 shrink-0" aria-hidden="true" />
-                                            <span className="whitespace-nowrap">Logout</span>
-                                        </button>
-                                    ) : (
                                         <Link
                                             href="/login"
                                             className={`
-                                    group flex items-center rounded-lg px-[12px] py-[8px] text-[13px] gap-x-[9px] 
-                                    text-[#282828] hover:text-[#282828] hover:bg-[#f7f7f7] w-full 
+                                    group flex items-center rounded-lg px-[12px] py-[8px] text-[13px] gap-x-[9px]
+                                    text-[#282828] hover:text-[#282828] hover:bg-[#f7f7f7] w-full
                                     transition-colors duration-${ANIMATION_DURATION.COLOR_TRANSITION} ease-out
                                     focus:outline-none
                                   `}
@@ -408,7 +370,6 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
                                             <LogOut className="h-3.5 w-3.5 shrink-0 transform -scale-x-100" aria-hidden="true" />
                                             <span className="whitespace-nowrap">Login</span>
                                         </Link>
-                                    )}
                                 </li>
                             </ul>
                         </div>
@@ -449,7 +410,6 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
             isCollapsed,
             isSettingsExpanded,
             toggleSettings,
-            handleLogout,
             handleKeyDown,
             getUniformTextStyle,
             getTextContainerStyle,
@@ -468,8 +428,6 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
         return userInfo?.display_name ? userInfo.display_name.charAt(0).toUpperCase() : 'G';
     }, [userInfo, authLoading]);
 
-    const isFirebaseUser = false;
-
     return (
         <aside
             className={`flex h-full flex-col bg-white border-r py-3 px-2 border-[#e5e5e5] relative ${isCollapsed ? 'w-[60px]' : 'w-[220px]'}`}
@@ -480,7 +438,7 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
         >
             <header className={`group relative h-6 flex shrink-0 items-center justify-between`}>
                 {isCollapsed ? (
-                    <Link href="https://pickle.com" target="_blank" rel="noopener noreferrer" className="flex items-center">
+                    <Link href="https://github.com/zaengerlein/glass" target="_blank" rel="noopener noreferrer" className="flex items-center">
                         <Image src="/symbol.svg" alt="Logo" width={20} height={20} className="mx-3 shrink-0" />
                         <button
                             onClick={toggleSidebar}
@@ -495,7 +453,7 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
                     </Link>
                 ) : (
                     <>
-                        <Link href="https://pickle.com" target="_blank" rel="noopener noreferrer" className="flex items-center">
+                        <Link href="https://github.com/zaengerlein/glass" target="_blank" rel="noopener noreferrer" className="flex items-center">
                             <Image
                                 src={isCollapsed ? '/symbol.svg' : '/word.svg'}
                                 alt="pickleglass Logo"
@@ -542,8 +500,8 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
 
                 {!isCollapsed && hasApiKey !== null && (
                     <div className="px-2.5 py-2 text-center">
-                        <span className={`text-xs px-2 py-1 rounded-full ${hasApiKey ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}`}>
-                            {hasApiKey ? 'Local running' : 'Pickle Free System'}
+                        <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+                            Local Mode
                         </span>
                     </div>
                 )}
@@ -609,11 +567,7 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
                         aria-label={`User: ${getUserDisplayName()}`}
                         onKeyDown={e =>
                             handleKeyDown(e, () => {
-                                if (isFirebaseUser) {
-                                    router.push('/settings');
-                                } else {
-                                    router.push('/login');
-                                }
+                                router.push('/settings');
                             })
                         }
                     >
