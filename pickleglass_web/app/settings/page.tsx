@@ -88,7 +88,7 @@ export default function SettingsPage() {
     return null
   }
 
-  const isFirebaseMode = mode === 'firebase'
+  const isFirebaseMode = false
 
   const tabs = [
     { id: 'profile' as Tab, name: 'Personal Profile', href: '/settings' },

@@ -468,7 +468,7 @@ const SidebarComponent = ({ isCollapsed, onToggle, onSearchClick }: SidebarProps
         return userInfo?.display_name ? userInfo.display_name.charAt(0).toUpperCase() : 'G';
     }, [userInfo, authLoading]);
 
-    const isFirebaseUser = userInfo && userInfo.uid !== 'default_user';
+    const isFirebaseUser = false;
 
     return (
         <aside
