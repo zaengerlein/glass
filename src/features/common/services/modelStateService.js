@@ -5,6 +5,8 @@ const encryptionService = require('./encryptionService');
 const providerSettingsRepository = require('../repositories/providerSettings');
 const authService = require('./authService');
 const ollamaModelRepository = require('../repositories/ollamaModel');
+const { updateProviderModels } = require('../ai/factory');
+const { fetchModels } = require('../ai/modelFetcher');
 
 class ModelStateService extends EventEmitter {
     constructor() {
@@ -14,10 +16,103 @@ class ModelStateService extends EventEmitter {
         this.store = new Store({ name: 'pickle-glass-model-state' });
     }
 
+    // Model cache TTL: 24 hours
+    static CACHE_TTL = 86400;
+
+    _getDb() {
+        const sqliteClient = require('./sqliteClient');
+        return sqliteClient.getDb();
+    }
+
+    _loadModelCache() {
+        try {
+            const db = this._getDb();
+            const rows = db.prepare('SELECT * FROM model_cache').all();
+            for (const row of rows) {
+                try {
+                    const llmModels = JSON.parse(row.llm_models_json || '[]');
+                    const sttModels = JSON.parse(row.stt_models_json || '[]');
+                    if (llmModels.length > 0 || sttModels.length > 0) {
+                        updateProviderModels(row.provider, llmModels, sttModels);
+                        console.log(`[ModelStateService] Loaded cached models for ${row.provider}`);
+                    }
+                } catch (parseErr) {
+                    console.warn(`[ModelStateService] Failed to parse model cache for ${row.provider}:`, parseErr.message);
+                }
+            }
+        } catch (error) {
+            console.warn('[ModelStateService] Failed to load model cache:', error.message);
+        }
+    }
+
+    _saveModelCache(provider, llmModels, sttModels) {
+        try {
+            const db = this._getDb();
+            db.prepare(`
+                INSERT OR REPLACE INTO model_cache (provider, llm_models_json, stt_models_json, fetched_at)
+                VALUES (?, ?, ?, ?)
+            `).run(
+                provider,
+                JSON.stringify(llmModels),
+                JSON.stringify(sttModels),
+                Math.floor(Date.now() / 1000)
+            );
+        } catch (error) {
+            console.warn(`[ModelStateService] Failed to save model cache for ${provider}:`, error.message);
+        }
+    }
+
+    async _refreshModelsInBackground() {
+        const allSettings = await providerSettingsRepository.getAll();
+        const now = Math.floor(Date.now() / 1000);
+
+        for (const setting of allSettings) {
+            if (!setting.api_key || setting.api_key === 'local') continue;
+            const provider = setting.provider;
+
+            // Check cache age
+            try {
+                const db = this._getDb();
+                const cached = db.prepare('SELECT fetched_at FROM model_cache WHERE provider = ?').get(provider);
+                if (cached && (now - cached.fetched_at) < ModelStateService.CACHE_TTL) {
+                    continue; // Cache still fresh
+                }
+            } catch (e) { /* no cache row, proceed to fetch */ }
+
+            console.log(`[ModelStateService] Background refresh: fetching models for ${provider}...`);
+            const result = await fetchModels(provider, setting.api_key);
+            if (result) {
+                updateProviderModels(provider, result.llmModels, result.sttModels);
+                this._saveModelCache(provider, result.llmModels, result.sttModels);
+            }
+        }
+
+        this.emit('state-updated', await this.getLiveState());
+        console.log('[ModelStateService] Background model refresh complete.');
+    }
+
+    async refreshModelsForProvider(provider, apiKey) {
+        const result = await fetchModels(provider, apiKey);
+        if (result) {
+            updateProviderModels(provider, result.llmModels, result.sttModels);
+            this._saveModelCache(provider, result.llmModels, result.sttModels);
+            this.emit('state-updated', await this.getLiveState());
+        }
+    }
+
     async initialize() {
         console.log('[ModelStateService] Initializing one-time setup...');
         await this._initializeEncryption();
         await this._runMigrations();
+
+        // Load cached model lists into PROVIDERS
+        this._loadModelCache();
+
+        // Trigger background model refresh (non-blocking)
+        this._refreshModelsInBackground().catch(err => {
+            console.warn('[ModelStateService] Background model refresh failed:', err.message);
+        });
+
         this.setupLocalAIStateSync();
         await this._autoSelectAvailableModels([], true);
         console.log('[ModelStateService] One-time setup complete.');
@@ -181,7 +276,14 @@ class ModelStateService extends EventEmitter {
         const finalKey = (provider === 'ollama' || provider === 'whisper') ? 'local' : key;
         const existingSettings = await providerSettingsRepository.getByProvider(provider) || {};
         await providerSettingsRepository.upsert(provider, { ...existingSettings, api_key: finalKey });
-        
+
+        // Fetch models for newly configured provider (non-blocking)
+        if (finalKey !== 'local') {
+            this.refreshModelsForProvider(provider, finalKey).catch(err => {
+                console.warn(`[ModelStateService] Model fetch for ${provider} failed:`, err.message);
+            });
+        }
+
         // 키가 추가/변경되었으므로, 해당 provider의 모델을 자동 선택할 수 있는지 확인
         await this._autoSelectAvailableModels([]);
         
