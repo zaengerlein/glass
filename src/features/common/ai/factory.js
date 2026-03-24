@@ -28,17 +28,6 @@ const PROVIDERS = {
           { id: 'gpt-4o-mini-transcribe', name: 'GPT-4o Mini Transcribe' }
       ],
   },
-
-  'openai-glass': {
-      name: 'OpenAI (Glass)',
-      handler: () => require("./providers/openai"),
-      llmModels: [
-          { id: 'gpt-4.1-glass', name: 'GPT-4.1 (glass)' },
-      ],
-      sttModels: [
-          { id: 'gpt-4o-mini-transcribe-glass', name: 'GPT-4o Mini Transcribe (glass)' }
-      ],
-  },
   'gemini': {
       name: 'Gemini',
       handler: () => require("./providers/gemini"),
@@ -95,45 +84,26 @@ const PROVIDERS = {
   },
 };
 
-function sanitizeModelId(model) {
-  return (typeof model === 'string') ? model.replace(/-glass$/, '') : model;
-}
-
 function createSTT(provider, opts) {
-  if (provider === 'openai-glass') provider = 'openai';
-  
   const handler = PROVIDERS[provider]?.handler();
   if (!handler?.createSTT) {
       throw new Error(`STT not supported for provider: ${provider}`);
-  }
-  if (opts && opts.model) {
-    opts = { ...opts, model: sanitizeModelId(opts.model) };
   }
   return handler.createSTT(opts);
 }
 
 function createLLM(provider, opts) {
-  if (provider === 'openai-glass') provider = 'openai';
-
   const handler = PROVIDERS[provider]?.handler();
   if (!handler?.createLLM) {
       throw new Error(`LLM not supported for provider: ${provider}`);
-  }
-  if (opts && opts.model) {
-    opts = { ...opts, model: sanitizeModelId(opts.model) };
   }
   return handler.createLLM(opts);
 }
 
 function createStreamingLLM(provider, opts) {
-  if (provider === 'openai-glass') provider = 'openai';
-  
   const handler = PROVIDERS[provider]?.handler();
   if (!handler?.createStreamingLLM) {
       throw new Error(`Streaming LLM not supported for provider: ${provider}`);
-  }
-  if (opts && opts.model) {
-    opts = { ...opts, model: sanitizeModelId(opts.model) };
   }
   return handler.createStreamingLLM(opts);
 }
@@ -141,16 +111,10 @@ function createStreamingLLM(provider, opts) {
 function getProviderClass(providerId) {
     const providerConfig = PROVIDERS[providerId];
     if (!providerConfig) return null;
-    
-    // Handle special cases for glass providers
-    let actualProviderId = providerId;
-    if (providerId === 'openai-glass') {
-        actualProviderId = 'openai';
-    }
-    
+
     // The handler function returns the module, from which we get the class.
     const module = providerConfig.handler();
-    
+
     // Map provider IDs to their actual exported class names
     const classNameMap = {
         'openai': 'OpenAIProvider',
@@ -160,8 +124,8 @@ function getProviderClass(providerId) {
         'ollama': 'OllamaProvider',
         'whisper': 'WhisperProvider'
     };
-    
-    const className = classNameMap[actualProviderId];
+
+    const className = classNameMap[providerId];
     return className ? module[className] : null;
 }
 
