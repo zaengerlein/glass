@@ -107,6 +107,7 @@ class ModelStateService extends EventEmitter {
         }
 
         this.emit('state-updated', await this.getLiveState());
+        this.emit('settings-updated');
         console.log('[ModelStateService] Background model refresh complete.');
     }
 
@@ -116,6 +117,7 @@ class ModelStateService extends EventEmitter {
             updateProviderModels(provider, result.llmModels, result.sttModels);
             this._saveModelCache(provider, result.llmModels, result.sttModels);
             this.emit('state-updated', await this.getLiveState());
+            this.emit('settings-updated');
         }
     }
 

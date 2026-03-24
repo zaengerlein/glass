@@ -962,10 +962,10 @@ export class SettingsView extends LitElement {
             this.loadInitialData();
         };
         
-        this._settingsUpdatedListener = (event, settings) => {
+        this._settingsUpdatedListener = async (event, settings) => {
             console.log('[SettingsView] Received settings-updated');
             this.settings = settings;
-            this.requestUpdate();
+            await this.refreshModelData();
         };
 
         // 프리셋 업데이트 리스너 추가
