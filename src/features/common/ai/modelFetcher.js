@@ -187,9 +187,11 @@ async function fetchGeminiModels(apiKey) {
     const data = await response.json();
     const models = data.models || [];
 
-    const llmExclude = /embedding|aqa|retrieval|text-|imagen|veo|lyria|learnlm/i;
+    // LLM: only gemini-* models with generateContent, exclude non-chat models
+    const llmExclude = /embedding|aqa|retrieval|imagen|veo|lyria|learnlm|tts|image|native-audio|robotics|computer-use|deep-research|customtools|nano-banana|gemma/i;
     const llmModels = models
         .filter(m =>
+            m.name.startsWith('models/gemini-') &&
             m.supportedGenerationMethods?.includes('generateContent') &&
             !llmExclude.test(m.name)
         )
@@ -199,8 +201,9 @@ async function fetchGeminiModels(apiKey) {
             name: m.displayName || m.name.replace('models/', '')
         }));
 
+    // STT: models with bidiGenerateContent (Live Audio API)
     const sttModels = models
-        .filter(m => /live/i.test(m.name))
+        .filter(m => m.supportedGenerationMethods?.includes('bidiGenerateContent'))
         .reverse()
         .map(m => ({
             id: m.name.replace('models/', ''),
