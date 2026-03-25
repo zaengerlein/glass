@@ -1144,8 +1144,14 @@ class OllamaService extends EventEmitter {
         this._clearWarmUpCache();
         this.stopPeriodicSync();
         
-        // 프로세스 종료
-        const isRunning = await this.isServiceRunning();
+        // Check if service is actually running (bypass isShuttingDown guard in makeRequest)
+        let isRunning = false;
+        try {
+            const response = await fetch(`${this.baseUrl}/api/ps`, { method: 'GET' });
+            isRunning = response.ok;
+        } catch (e) {
+            isRunning = false;
+        }
         if (!isRunning) {
             console.log('[OllamaService] Service not running, nothing to shutdown');
             return true;
