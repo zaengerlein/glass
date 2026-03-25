@@ -99,14 +99,14 @@ async function fetchOpenAIModels(apiKey) {
     const llmModels = allModels
         .filter(m => llmInclude.test(m.id) && !llmExclude.test(m.id))
         .sort((a, b) => (b.created || 0) - (a.created || 0))
-        .map(m => ({ id: m.id, name: formatOpenAIModelName(m.id) }));
+        .map(m => ({ id: m.id, name: `OpenAI - ${formatOpenAIModelName(m.id)}` }));
 
     const sttInclude = /transcribe|whisper/i;
     const sttExclude = /tts/i;
     const sttModels = allModels
         .filter(m => sttInclude.test(m.id) && !sttExclude.test(m.id))
         .sort((a, b) => (b.created || 0) - (a.created || 0))
-        .map(m => ({ id: m.id, name: formatOpenAIModelName(m.id) }));
+        .map(m => ({ id: m.id, name: `OpenAI - ${formatOpenAIModelName(m.id)}` }));
 
     console.log(`[ModelFetcher] OpenAI: ${llmModels.length} LLM, ${sttModels.length} STT models found`);
     return { llmModels, sttModels };
@@ -166,7 +166,7 @@ async function fetchAnthropicModels(apiKey) {
     const llmModels = models
         .filter(m => m.id.startsWith('claude-'))
         .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
-        .map(m => ({ id: m.id, name: formatAnthropicModelName(m.id) }));
+        .map(m => ({ id: m.id, name: `Anthropic - ${formatAnthropicModelName(m.id)}` }));
 
     console.log(`[ModelFetcher] Anthropic: ${llmModels.length} LLM models found`);
     return { llmModels, sttModels: [] };
@@ -198,7 +198,7 @@ async function fetchGeminiModels(apiKey) {
         .reverse() // API returns oldest first, we want newest first
         .map(m => ({
             id: m.name.replace('models/', ''),
-            name: m.displayName || m.name.replace('models/', '')
+            name: `Google - ${m.displayName || m.name.replace('models/', '')}`
         }));
 
     // STT: models with bidiGenerateContent (Live Audio API)
@@ -207,7 +207,7 @@ async function fetchGeminiModels(apiKey) {
         .reverse()
         .map(m => ({
             id: m.name.replace('models/', ''),
-            name: m.displayName || m.name.replace('models/', '')
+            name: `Google - ${m.displayName || m.name.replace('models/', '')}`
         }));
 
     console.log(`[ModelFetcher] Gemini: ${llmModels.length} LLM, ${sttModels.length} STT models found`);

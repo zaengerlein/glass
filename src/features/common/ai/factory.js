@@ -22,27 +22,27 @@ const PROVIDERS = {
       name: 'OpenAI',
       handler: () => require("./providers/openai"),
       llmModels: [
-          { id: 'gpt-4.1', name: 'GPT-4.1' },
+          { id: 'gpt-4.1', name: 'OpenAI - GPT-4.1' },
       ],
       sttModels: [
-          { id: 'gpt-4o-mini-transcribe', name: 'GPT-4o Mini Transcribe' }
+          { id: 'gpt-4o-mini-transcribe', name: 'OpenAI - GPT-4o Mini Transcribe' }
       ],
   },
   'gemini': {
       name: 'Gemini',
       handler: () => require("./providers/gemini"),
       llmModels: [
-          { id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' },
+          { id: 'gemini-2.5-flash', name: 'Google - Gemini 2.5 Flash' },
       ],
       sttModels: [
-          { id: 'gemini-live-2.5-flash-preview', name: 'Gemini Live 2.5 Flash' }
+          { id: 'gemini-live-2.5-flash-preview', name: 'Google - Gemini Live 2.5 Flash' }
       ],
   },
   'anthropic': {
       name: 'Anthropic',
       handler: () => require("./providers/anthropic"),
       llmModels: [
-          { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet' },
+          { id: 'claude-3-5-sonnet-20241022', name: 'Anthropic - Claude 3.5 Sonnet' },
       ],
       sttModels: [],
   },
@@ -51,11 +51,11 @@ const PROVIDERS = {
     handler: () => require("./providers/deepgram"),
     llmModels: [],
     sttModels: [
-        { id: 'nova-3', name: 'Nova-3' },
-        { id: 'nova-2', name: 'Nova-2' },
-        { id: 'nova', name: 'Nova' },
-        { id: 'enhanced', name: 'Enhanced' },
-        { id: 'base', name: 'Base' },
+        { id: 'nova-3', name: 'Deepgram - Nova-3' },
+        { id: 'nova-2', name: 'Deepgram - Nova-2' },
+        { id: 'nova', name: 'Deepgram - Nova' },
+        { id: 'enhanced', name: 'Deepgram - Enhanced' },
+        { id: 'base', name: 'Deepgram - Base' },
     ],
     },
   'ollama': {
@@ -80,10 +80,10 @@ const PROVIDERS = {
       },
       llmModels: [],
       sttModels: [
-          { id: 'whisper-tiny', name: 'Whisper Tiny (39M)' },
-          { id: 'whisper-base', name: 'Whisper Base (74M)' },
-          { id: 'whisper-small', name: 'Whisper Small (244M)' },
-          { id: 'whisper-medium', name: 'Whisper Medium (769M)' },
+          { id: 'whisper-tiny', name: 'Whisper - Tiny (39M)' },
+          { id: 'whisper-base', name: 'Whisper - Base (74M)' },
+          { id: 'whisper-small', name: 'Whisper - Small (244M)' },
+          { id: 'whisper-medium', name: 'Whisper - Medium (769M)' },
       ],
   },
 };
