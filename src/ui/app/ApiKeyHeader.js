@@ -1912,7 +1912,7 @@ export class ApiKeyHeader extends LitElement {
     openPrivacyPolicy() {
         console.log('🔊 openPrivacyPolicy ApiKeyHeader');
         if (window.api?.common) {
-            window.api.common.openExternal('https://pickle.com/privacy-policy');
+            window.api.common.openExternal('https://github.com/zaengerlein/glass/blob/main/docs/PRIVACY_POLICY.md');
         }
     }
 

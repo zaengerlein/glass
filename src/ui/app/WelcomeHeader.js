@@ -196,7 +196,7 @@ export class WelcomeHeader extends LitElement {
                     <div class="option-content">
                         <div class="option-title">Quick start with default API key</div>
                         <div class="option-description">
-                            100% free with Pickle's OpenAI key<br/>No personal data collected<br/>Sign up with Google in seconds
+                            No personal data collected<br/>Use your own API keys
                         </div>
                     </div>
                     <button class="action-button" @click=${this.loginCallback}>
@@ -228,7 +228,7 @@ export class WelcomeHeader extends LitElement {
     openPrivacyPolicy() {
         console.log('🔊 openPrivacyPolicy WelcomeHeader');
         if (window.api?.common) {
-            window.api.common.openExternal('https://pickle.com/privacy-policy');
+            window.api.common.openExternal('https://github.com/zaengerlein/glass/blob/main/docs/PRIVACY_POLICY.md');
         }
     }
 }
