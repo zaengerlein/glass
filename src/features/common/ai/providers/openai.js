@@ -151,7 +151,7 @@ function createLLM({ apiKey, model = 'gpt-4.1', temperature = 0.7, maxTokens = 2
       model: model,
       messages: messages,
       temperature: temperature,
-      max_tokens: maxTokens
+      max_completion_tokens: maxTokens
     });
     return {
       content: response.choices[0].message.content.trim(),
@@ -221,7 +221,7 @@ function createStreamingLLM({ apiKey, model = 'gpt-4.1', temperature = 0.7, maxT
           model: model,
           messages,
           temperature,
-          max_tokens: maxTokens,
+          max_completion_tokens: maxTokens,
           stream: true,
         }),
       });
