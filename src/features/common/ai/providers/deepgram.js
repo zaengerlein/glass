@@ -38,15 +38,21 @@ class DeepgramProvider {
 
 function createSTT({
     apiKey,
-    language = 'en-US',
+    language = 'multi',
     sampleRate = 24000,
     callbacks = {},
   }) {
+    // Nova-3 supports 'multi' for automatic language detection.
+    // Override generic short codes (e.g. 'en') so multilingual input is recognised.
+    const effectiveLanguage = (language && language !== 'multi' && language.length <= 3)
+      ? 'multi'
+      : (language || 'multi');
+
     const qs = new URLSearchParams({
       model: 'nova-3',
       encoding: 'linear16',
       sample_rate: sampleRate.toString(),
-      language,
+      language: effectiveLanguage,
       smart_format: 'true',
       interim_results: 'true',
       channels: '1',
